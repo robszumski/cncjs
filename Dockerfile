@@ -1,10 +1,4 @@
-FROM node:10
-MAINTAINER Cheton Wu <cheton@gmail.com>
-
-ADD package.json package.json
-RUN npm i npm@latest -g
-RUN npm install --production
-
-ADD . .
-EXPOSE 8000
-CMD ["bin/cncjs"]
+FROM cncjs/cncjs:v1.9.20
+RUN apt-get update
+RUN apt-get install -y udev          
+RUN ./node_modules/.bin/electron-rebuild -f -v 2.0.18 --module-dir /dist/cnc/
