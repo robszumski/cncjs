@@ -160,6 +160,7 @@
     "@trendmicro/react-toggle-switch": "~0.5.7",
     "@trendmicro/react-tooltip": "~0.6.0",
     "@trendmicro/react-validation": "~0.1.0",
+    "@adobe/css-tools": "4.3.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.18.3",
     "bootstrap": "~3.3.7",
