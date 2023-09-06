@@ -1,4 +1,4 @@
-FROM cncjs/cncjs:v1.9.20
+FROM cncjs/cncjs:v1.9.21
 ADD .cncrc .cncrc
 RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
 RUN apt-get update
