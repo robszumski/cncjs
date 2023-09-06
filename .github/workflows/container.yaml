@@ -42,4 +42,16 @@ jobs:
       - name: Push Image
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          docker push ${{ env.CONTAINER_IMAGE }}
+          docker push ${{ env.CONTAINER_IMAGE }}      
+      - name: Download Syft
+        id: syft
+        uses: anchore/sbom-action/download-syft@v0.14.2
+      
+      - name: Generate SBOM from the container
+        run: "${{ steps.syft.outputs.cmd }} --config .github/edgebit/build-syft.yaml --file /tmp/sbom.syft.json ."
+      
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: edgebit-sbom
+          path: /tmp/sbom.syft.json
