@@ -1,24 +1,45 @@
-name: Generate an SBOM from source code
+name: Container
 
 on:
-  - pull_request
+  push:
+    branches:
+      - '*'
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  CONTAINER_IMAGE: quay.io/robszumski/cncjs.com:latest
 
 jobs:
-  generate-sbom:
+  build-container:
     runs-on: ubuntu-latest
+    outputs:
+      container_image: ${{ env.CONTAINER_IMAGE }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Download Syft
-        id: syft
-        uses: anchore/sbom-action/download-syft@v0.14.2
-
-      - name: Generate SBOM from source code
-        run: "${{ steps.syft.outputs.cmd }} --config .github/edgebit/source-syft.yaml --file /tmp/sbom.syft.json ."
-
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v3
+      - name: Login to Quay
+        uses: docker/login-action@v2
         with:
-          name: edgebit-sbom
-          path: /tmp/sbom.syft.json
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: ${{ env.CONTAINER_IMAGE }}
+
+      - name: Push Image
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          docker push ${{ env.CONTAINER_IMAGE }}
