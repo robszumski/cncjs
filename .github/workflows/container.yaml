@@ -48,7 +48,7 @@ jobs:
         uses: anchore/sbom-action/download-syft@v0.14.2
       
       - name: Generate SBOM from the container
-        run: "${{ steps.syft.outputs.cmd }} --config .github/edgebit/build-syft.yaml --file /tmp/sbom.syft.json ."
+        run: "${{ steps.syft.outputs.cmd }} --config .github/edgebit/build-syft.yaml --file /tmp/sbom.syft.json ${{ env.CONTAINER_IMAGE }}"
       
       - name: Upload SBOM
         uses: actions/upload-artifact@v3
